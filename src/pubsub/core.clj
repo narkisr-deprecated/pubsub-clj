@@ -1,12 +1,22 @@
 (ns pubsub.core
   (:require
-   [pubsub.connection :refer (channel-provider channel-builder creds-provider topic)]
-   [pubsub.publisher :refer (publisher publish message)]))
+   [pubsub.connection :refer (create-channel topic)]
+   [pubsub.topic :refer (create-topic get-topic)]
+   [pubsub.publish :refer (publisher publish message)]))
 
 (defn produce []
-  (let [channel (channel-provider (channel-builder "10.147.17.46:8085"))
-        creds (creds-provider)
+  (let [creds (creds-provider)
         t (topic "foo" "bar")
-        p (publisher t channel creds)]
-    (publish p (message "hello"))
-    (.shutdown p)))
+        c (create-channel "10.8.4.102:8085")
+        pub (publisher c t)]
+    (try
+      (let [t (get-topic c "foo" "bar")]
+        (when-not t
+          (create-topic c "foo" "bar")))
+      (.get (publish pub (message "hello")))
+      (finally
+        (.shutdown pub)))))
+
+(comment
+  (produce))
+

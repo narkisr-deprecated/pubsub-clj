@@ -16,17 +16,18 @@
       (.usePlaintext)
       (.build)))
 
-(defn channel-provider [channel]
-  (FixedTransportChannelProvider/create (GrpcTransportChannel/create channel)))
+(defn create-channel [host-port]
+  (FixedTransportChannelProvider/create
+   (GrpcTransportChannel/create (channel-builder host-port))))
 
 (defn creds-provider []
   (NoCredentialsProvider/create))
 
-(defn topic-client [channel creds]
+(defn topic-client [c]
   (TopicAdminClient/create
    (-> (TopicAdminSettings/newBuilder)
-       (.setTransportChannelProvider channel)
-       (.setCredentialsProvider creds)
+       (.setTransportChannelProvider c)
+       (.setCredentialsProvider (creds-provider))
        (.build))))
 
 (defn topic [project id]
