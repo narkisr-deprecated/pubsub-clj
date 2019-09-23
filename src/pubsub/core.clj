@@ -5,8 +5,7 @@
    [pubsub.publish :refer (publisher publish message)]))
 
 (defn produce []
-  (let [creds (creds-provider)
-        t (topic "foo" "bar")
+  (let [t (topic "foo" "bar")
         c (create-channel "10.8.4.102:8085")
         pub (publisher c t)]
     (try
