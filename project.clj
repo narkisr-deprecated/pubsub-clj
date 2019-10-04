@@ -5,4 +5,11 @@
         [org.clojure/clojure "1.10.1"]
         [com.taoensso/timbre "4.10.0"]
         [com.google.cloud/google-cloud-pubsub "1.90.0"]]
+
+  :plugins [
+     [lein-cljfmt "0.6.3"]
+     [lein-ancient "0.6.15" :exclusions [org.clojure/clojure]]
+     [lein-tag "0.1.0"]
+     [lein-set-version "0.3.0"] ]
+
   :repl-options {:init-ns pubsub.core})
