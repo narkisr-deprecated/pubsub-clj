@@ -5,8 +5,6 @@
    com.google.api.gax.grpc.GrpcTransportChannel
    com.google.api.gax.rpc.FixedTransportChannelProvider
    com.google.api.gax.rpc.TransportChannelProvider
-   com.google.cloud.pubsub.v1.TopicAdminClient
-   com.google.cloud.pubsub.v1.TopicAdminSettings
    com.google.pubsub.v1.ProjectTopicName
    io.grpc.ManagedChannel
    io.grpc.ManagedChannelBuilder))
@@ -22,13 +20,3 @@
 
 (defn creds-provider []
   (NoCredentialsProvider/create))
-
-(defn topic-client [c]
-  (TopicAdminClient/create
-   (-> (TopicAdminSettings/newBuilder)
-       (.setTransportChannelProvider c)
-       (.setCredentialsProvider (creds-provider))
-       (.build))))
-
-(defn topic [project id]
-  (ProjectTopicName/of project id))

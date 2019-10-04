@@ -1,21 +1,44 @@
 (ns pubsub.core
   (:require
-   [pubsub.connection :refer (create-channel topic)]
+   [pubsub.connection :refer (create-channel)]
    [pubsub.topic :refer (create-topic get-topic)]
-   [pubsub.publish :refer (publisher publish message)]))
+   [pubsub.publish :refer (publisher publish message)]
+   [pubsub.subscribe :refer (subscriber create-subscription get-subscription)]))
+
+(def project "planets")
+
+(def topic "photons")
+
+(def subscription "particles")
+
+(defn channel []
+  (create-channel "10.8.4.102:8085"))
+
+(defn initialize
+  "Create topic and subscription"
+  []
+  (let [c (channel)
+        t (get-topic c project topic)
+        s  (get-subscription c project "test-sub")]
+    (when-not t
+      (create-topic c project topic))
+    (when-not s
+      (create-subscription c project topic "test-sub"))))
 
 (defn produce []
-  (let [t (topic "foo" "bar")
-        c (create-channel "10.8.4.102:8085")
-        pub (publisher c t)]
+  (let [c (channel)
+        pub (publisher c project topic)]
     (try
-      (let [t (get-topic c "foo" "bar")]
-        (when-not t
-          (create-topic c "foo" "bar")))
       (.get (publish pub (message "hello")))
       (finally
         (.shutdown pub)))))
 
+(defn consume []
+  (let [c (channel)]
+    (subscriber c project "test-sub")))
+
 (comment
+  (initialize)
+  (future (consume))
   (produce))
 

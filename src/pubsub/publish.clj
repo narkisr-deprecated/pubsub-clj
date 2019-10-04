@@ -1,15 +1,16 @@
 (ns pubsub.publish
   "Publishing messages"
   (:require
-   [pubsub.connection :refer (create-channel creds-provider topic)])
+   [pubsub.connection :refer (creds-provider)])
   (:import
+   com.google.pubsub.v1.ProjectTopicName
    com.google.cloud.pubsub.v1.Publisher
    com.google.protobuf.ByteString
    com.google.pubsub.v1.PubsubMessage))
 
 (defn publisher
-  [c t]
-  (-> (Publisher/newBuilder t)
+  [c project topic]
+  (-> (Publisher/newBuilder (ProjectTopicName/of project topic))
       (.setChannelProvider c)
       (.setCredentialsProvider (creds-provider))
       (.build)))
@@ -22,8 +23,4 @@
 (defn publish
   "returns an ApiFuture"
   [p m]
-  (.publish p
-
-            m))
-
-
+  (.publish p m))
