@@ -9,11 +9,14 @@
    com.google.pubsub.v1.PubsubMessage))
 
 (defn publisher
-  [c project topic]
-  (-> (Publisher/newBuilder (ProjectTopicName/of project topic))
-      (.setChannelProvider c)
-      (.setCredentialsProvider (creds-provider))
-      (.build)))
+  ([project topic]
+   (-> (Publisher/newBuilder (ProjectTopicName/of project topic))
+       (.build)))
+  ([c project topic]
+   (-> (Publisher/newBuilder (ProjectTopicName/of project topic))
+       (.setChannelProvider c)
+       (.setCredentialsProvider (creds-provider))
+       (.build))))
 
 (defn message [s]
   (-> (PubsubMessage/newBuilder)

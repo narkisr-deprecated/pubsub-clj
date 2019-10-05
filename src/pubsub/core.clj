@@ -7,9 +7,9 @@
 
 (def project "planets")
 
-(def topic "photons")
+(def topic "moon")
 
-(def subscription "particles")
+(def subscription "astroids")
 
 (defn channel []
   (create-channel "10.8.4.102:8085"))
@@ -41,4 +41,3 @@
   (initialize)
   (future (consume))
   (produce))
-

@@ -51,16 +51,23 @@
     (.awaitRunning)
     (.awaitTerminated)))
 
-(defn build [c sub-name]
-  (-> (Subscriber/newBuilder sub-name reciever)
-      (.setChannelProvider c)
-      (.setCredentialsProvider (creds-provider))
-      (.build)))
+(defn builder
+  ([sub-name]
+   (Subscriber/newBuilder sub-name reciever))
+  ([c sub-name]
+   (-> (Subscriber/newBuilder sub-name reciever)
+       (.setChannelProvider c)
+       (.setCredentialsProvider (creds-provider)))))
 
-(defn subscriber
-  [c project sub-id]
-  (let [sub (build c (ProjectSubscriptionName/of project sub-id))]
+(defn create [b]
+  (let [sub (.build b)]
     (try
       (await- sub)
       (finally
         (.stopAsync sub)))))
+
+(defn subscriber
+  ([project sub-id]
+   (create (builder (ProjectSubscriptionName/of project sub-id))))
+  ([c project sub-id]
+   (create (builder c (ProjectSubscriptionName/of project sub-id)))))
