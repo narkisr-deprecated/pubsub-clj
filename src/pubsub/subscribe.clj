@@ -46,10 +46,13 @@
           (error "got" e))))))
 
 (defn await- [sub]
-  (doto sub
-    (.startAsync)
-    (.awaitRunning)
-    (.awaitTerminated)))
+  (try
+    (doto sub
+      (.startAsync)
+      (.awaitRunning)
+      (.awaitTerminated))
+    (finally
+      (.stopAsync sub))))
 
 (defn builder
   ([sub-name]
@@ -59,15 +62,8 @@
        (.setChannelProvider c)
        (.setCredentialsProvider (creds-provider)))))
 
-(defn create [b]
-  (let [sub (.build b)]
-    (try
-      (await- sub)
-      (finally
-        (.stopAsync sub)))))
-
 (defn subscriber
   ([project sub-id]
-   (create (builder (ProjectSubscriptionName/of project sub-id))))
+   (.build (builder (ProjectSubscriptionName/of project sub-id))))
   ([c project sub-id]
-   (create (builder c (ProjectSubscriptionName/of project sub-id)))))
+   (.build (builder c (ProjectSubscriptionName/of project sub-id)))))

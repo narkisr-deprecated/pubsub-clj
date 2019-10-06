@@ -3,7 +3,7 @@
    [pubsub.connection :refer (create-channel)]
    [pubsub.topic :refer (create-topic get-topic)]
    [pubsub.publish :refer (publisher publish message)]
-   [pubsub.subscribe :refer (subscriber create-subscription get-subscription)]))
+   [pubsub.subscribe :refer (subscriber await- create-subscription get-subscription)]))
 
 (def project "planets")
 
@@ -33,11 +33,14 @@
       (finally
         (.shutdown pub)))))
 
-(defn consume []
+(def consumer (atom nil))
+
+(defn subscribe []
   (let [c (channel)]
-    (subscriber c project "test-sub")))
+    (reset! consumer (subscriber c project "test-sub"))))
 
 (comment
   (initialize)
-  (future (consume))
+  (subscribe)
+  (future (await- @consumer))
   (produce))
