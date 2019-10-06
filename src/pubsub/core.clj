@@ -16,14 +16,13 @@
 
 (defn initialize
   "Create topic and subscription"
-  []
-  (let [c (channel)
-        t (get-topic c project topic)
-        s  (get-subscription c project "test-sub")]
+  [c project topic sub]
+  (let [t (get-topic c project topic)
+        s  (get-subscription c project sub)]
     (when-not t
       (create-topic c project topic))
     (when-not s
-      (create-subscription c project topic "test-sub"))))
+      (create-subscription c project topic sub))))
 
 (defn produce []
   (let [c (channel)
@@ -40,7 +39,7 @@
     (reset! consumer (subscriber c project "test-sub"))))
 
 (comment
-  (initialize)
+  (initialize (channel) project topic subscription)
   (subscribe)
   (future (await- @consumer))
   (produce))
