@@ -1,4 +1,4 @@
-(defproject pubsub-clj "0.2.0"
+(defproject pubsub-clj "0.2.1"
   :description "Google pubsub in Clojure"
   :license  {:name "Apache License, Version 2.0" :url "http://www.apache.org/licenses/LICENSE-2.0.html"}
   :dependencies [
