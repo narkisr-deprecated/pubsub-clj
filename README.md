@@ -4,7 +4,7 @@ A google pubsub library for Clojure
 
 # Usage
 
-TBD
+Check [core.clj](https://github.com/narkisr/pubsub-clj/blob/master/src/pubsub/core.clj)
 
 # Copyright and license
 
