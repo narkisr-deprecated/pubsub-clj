@@ -1,9 +1,12 @@
 (ns pubsub.core
   (:require
+   [taoensso.timbre :refer (refer-timbre)]
    [pubsub.connection :refer (create-channel)]
    [pubsub.topic :refer (create-topic get-topic)]
    [pubsub.publish :refer (publisher publish message)]
    [pubsub.subscribe :refer (subscriber await- create-subscription get-subscription)]))
+
+(refer-timbre)
 
 (def project "planets")
 
@@ -36,7 +39,9 @@
 
 (defn subscribe []
   (let [c (channel)]
-    (reset! consumer (subscriber c project "test-sub"))))
+    (reset! consumer
+            (subscriber c project subscription
+                        (fn [id data] (info "processing" id "with" data))))))
 
 (comment
   (initialize (channel) project topic subscription)

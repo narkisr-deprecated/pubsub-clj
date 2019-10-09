@@ -35,12 +35,13 @@
         sub-name (ProjectSubscriptionName/of project sub-id)]
     (.createSubscription admin sub-name topic-name (PushConfig/getDefaultInstance) 0)))
 
-(def reciever
+(defn reciever [f]
   (reify MessageReceiver
     (receiveMessage [this message consumer]
       (try
         (let [id (.getMessageId message) data (.toStringUtf8 (.getData message))]
-          (info "got message" id "with data" data)
+          (debug "got message" id "with data" data)
+          (f id data)
           (.ack consumer))
         (catch Exception e
           (error "got" e))))))
@@ -55,15 +56,15 @@
       (.stopAsync sub))))
 
 (defn builder
-  ([sub-name]
-   (Subscriber/newBuilder sub-name reciever))
-  ([c sub-name]
-   (-> (Subscriber/newBuilder sub-name reciever)
+  ([sub-name f]
+   (Subscriber/newBuilder sub-name (reciever f)))
+  ([c sub-name f]
+   (-> (Subscriber/newBuilder sub-name (reciever f))
        (.setChannelProvider c)
        (.setCredentialsProvider (creds-provider)))))
 
 (defn subscriber
-  ([project sub-id]
-   (.build (builder (ProjectSubscriptionName/of project sub-id))))
-  ([c project sub-id]
-   (.build (builder c (ProjectSubscriptionName/of project sub-id)))))
+  ([project sub-id f]
+   (.build (builder (ProjectSubscriptionName/of project sub-id) f)))
+  ([c project sub-id f]
+   (.build (builder c (ProjectSubscriptionName/of project sub-id) f))))
